@@ -1,0 +1,5 @@
+name = Google CSE Default
+description = "This module will show Google CSE as the default tab for site searches."
+dependencies[] = search
+dependencies[] = google_cse
+core = 6.x

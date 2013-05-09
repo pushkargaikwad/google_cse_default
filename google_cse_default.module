@@ -1,0 +1,105 @@
+<?php
+/**
+* Module admin configuration settings
+*/
+
+function google_cse_default_form() {
+
+  $form = array();
+  
+  $form['google_cse_default'] = array(
+    '#type' => 'checkbox',
+    '#title' => t('Show Google CSE as the default tab for site searches?'),
+    '#default_value' => variable_get('google_cse_default', 0),
+    '#description' => t('Check this box and save the configuration to show the Google CSE as the default tab for site searches.'),
+  );
+
+  return system_settings_form($form);
+}
+
+/**
+* Module menu setup
+*/
+
+function google_cse_default_menu() {
+
+  $items = array();
+
+  $items['admin/settings/google_cse_default'] = array(
+    'title' => 'Google CSE Default',
+    'description' => 'This module will show Google CSE as the default tab for site searches.',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('google_cse_default_form'),
+    'access arguments' => array('Administer google cse default settings'),
+    'type' => MENU_NORMAL_ITEM,
+   );
+
+  return $items;
+}
+
+/**
+* Display help and module information
+* @param path which path of the site we're displaying help
+* @param arg array that holds the current path as would be returned from arg() function
+* @return help text for the path
+*/
+
+function google_cse_default_help($path, $arg) {
+  $output = '';  //declare your output variable
+  switch ($path) {
+    case "admin/help#google_cse_default":
+      $output = '<p>'.  t("This module will show Google CSE as the default tab for site searches.") .'</p>';
+      break;
+  }
+  return $output;
+} // function google_cse_default_help
+
+/**
+* Valid permissions for this module
+* @return array
+*/
+function google_cse_default_perm() {
+  return array('Administer google cse default settings');
+} // function google_cse_default_perm()
+
+/**
+ * Implementation of hook_form_alter()
+ *
+ *
+ */
+function google_cse_default_form_alter(&$form, $form_state, $form_id) {
+
+  if ($form_id == 'search_form' || $form_id == 'search_theme_form') {
+  
+    if (variable_get('google_cse_default', 0)) { 
+    
+        $form['#submit'][] = 'google_cse_default_submit'; // rewrite drupal's function search_box_submit($form, &$form_state)
+        
+    }
+  }
+  
+}
+
+/**
+ * Process the Google CSE serach redirect
+ *
+ *
+ */
+function google_cse_default_submit($form, &$form_state) {
+    
+    if (variable_get('google_cse_default', 0)) { 
+    
+      if (isset($_REQUEST['destination'])) {
+        unset($_REQUEST['destination']);
+      }
+      
+      if (isset($_REQUEST['edit']['destination'])) {
+        unset($_REQUEST['edit']['destination']);
+      }
+
+      $form_id = $form['form_id']['#value'];
+      $form_state['redirect'] = 'search/google/'. trim($form_state['values'][$form_id]); // HERE WE MAKE A RIGHT REDIRECT
+  
+    }
+}
+?>

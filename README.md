@@ -1,4 +1,4 @@
-google_cse_default
+Google CSE Default
 ==================
 
-Make Google Search Engine as Default in Drupal
+Make Google Search Engine as Default in Drupal.
